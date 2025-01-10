@@ -71,10 +71,4 @@ class WindowsComputerTool(BaseAnthropicTool):
         return ToolResult(
             base64_image=base64.b64encode(img_byte_arr).decode()
         )
-        
-    def to_params(self) -> BetaToolComputerUse20241022Param:
-        return {
-            "type": self.api_type,
-            "display_width_px": self.width,
-            "display_height_px": self.height,
-        }
+    
