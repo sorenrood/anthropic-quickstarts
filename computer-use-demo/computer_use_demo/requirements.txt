@@ -6,4 +6,3 @@ google-auth<3,>=2
 pyautogui>=0.9.54
 pillow>=10.0.0
 pywin32>=306
-python-vnc-server>=0.2.0
