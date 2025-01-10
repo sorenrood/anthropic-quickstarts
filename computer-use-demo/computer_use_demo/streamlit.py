@@ -11,7 +11,7 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta
 from enum import StrEnum
 from functools import partial
-from pathlib import PosixPath
+from pathlib import Path
 from typing import cast
 
 import httpx
@@ -31,7 +31,7 @@ from computer_use_demo.loop import (
 )
 from computer_use_demo.tools import ToolResult
 
-CONFIG_DIR = PosixPath("~/.anthropic").expanduser()
+CONFIG_DIR = Path("~/.anthropic").expanduser()
 API_KEY_FILE = CONFIG_DIR / "api_key"
 STREAMLIT_STYLE = """
 <style>
