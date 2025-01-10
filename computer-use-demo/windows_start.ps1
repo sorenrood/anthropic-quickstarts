@@ -17,7 +17,7 @@ if (-not (Test-Path ".venv")) {
 .\.venv\Scripts\Activate.ps1
 
 # Install requirements
-pip install -r computer_use_demo/requirements_windows.txt
+pip install -r computer_use_demo/requirements.txt
 
 # Set environment variables
 $env:ANTHROPIC_API_KEY = $AnthropicApiKey

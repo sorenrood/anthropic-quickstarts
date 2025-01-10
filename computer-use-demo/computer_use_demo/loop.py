@@ -29,7 +29,7 @@ from anthropic.types.beta import (
     BetaToolUseBlockParam,
 )
 
-from .tools import BashTool, ComputerTool, EditTool, ToolCollection, ToolResult
+from .tools import BashTool, ComputerTool, WindowsComputerTool, EditTool, ToolCollection, ToolResult
 
 COMPUTER_USE_BETA_FLAG = "computer-use-2024-10-22"
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
@@ -70,6 +70,20 @@ SYSTEM_PROMPT = f"""<SYSTEM_CAPABILITY>
 </IMPORTANT>"""
 
 
+def create_tool_collection():
+    if platform.system() == "Windows":
+        return ToolCollection(
+            WindowsComputerTool(),
+            EditTool(),
+        )
+    else:
+        return ToolCollection(
+            ComputerTool(),
+            BashTool(),
+            EditTool(),
+        )
+
+
 async def sampling_loop(
     *,
     model: str,
@@ -88,11 +102,7 @@ async def sampling_loop(
     """
     Agentic sampling loop for the assistant/tool interaction of computer use.
     """
-    tool_collection = ToolCollection(
-        ComputerTool(),
-        BashTool(),
-        EditTool(),
-    )
+    tool_collection = create_tool_collection()
     system = BetaTextBlockParam(
         type="text",
         text=f"{SYSTEM_PROMPT}{' ' + system_prompt_suffix if system_prompt_suffix else ''}",
