@@ -21,6 +21,21 @@ class WindowsComputerTool(BaseAnthropicTool):
         self.width, self.height = pyautogui.size()
         pyautogui.FAILSAFE = False  # Disable fail-safe
         
+    @property
+    def options(self):
+        return {
+            "display_width_px": self.width,
+            "display_height_px": self.height,
+            "display_number": None,
+        }
+
+    def to_params(self) -> BetaToolComputerUse20241022Param:
+        return {
+            "name": self.name,
+            "type": self.api_type,
+            **self.options
+        }
+        
     async def __call__(self, action: str, coordinate: list[int] | None = None, text: str | None = None, **kwargs):
         if action == "screenshot":
             return await self.take_screenshot()
@@ -28,7 +43,7 @@ class WindowsComputerTool(BaseAnthropicTool):
         if coordinate:
             x, y = coordinate
             if not (0 <= x <= self.width and 0 <= y <= self.height):
-                raise ToolError(f"Coordinates ({x}, {y}) out of bounds")
+                raise ToolError(f"Coordinates ({x}, {y}) are out of bounds for screen size {self.width}x{self.height}")
                 
         if action == "mouse_move":
             pyautogui.moveTo(x, y)
