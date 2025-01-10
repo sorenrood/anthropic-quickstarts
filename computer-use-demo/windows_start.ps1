@@ -21,6 +21,7 @@ pip install -r computer_use_demo/requirements.txt
 
 # Set environment variables
 $env:ANTHROPIC_API_KEY = $AnthropicApiKey
+$env:STREAMLIT_BROWSER_GATHER_USAGE_STATS = "false"
 
 # Start Streamlit
 Start-Process -NoNewWindow python -ArgumentList "-m streamlit run computer_use_demo/streamlit.py"
