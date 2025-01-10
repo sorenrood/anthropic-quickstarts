@@ -40,24 +40,45 @@ class WindowsComputerTool(BaseAnthropicTool):
         if action == "screenshot":
             return await self.take_screenshot()
             
-        if coordinate:
+        # For actions that require coordinates
+        if action in ["mouse_move", "left_click", "right_click", "double_click"]:
+            if not coordinate:
+                raise ToolError(f"coordinate is required for {action}")
+            if not isinstance(coordinate, (list, tuple)) or len(coordinate) != 2:
+                raise ToolError(f"coordinate must be a list or tuple of length 2, got {coordinate}")
+            
             x, y = coordinate
+            if not isinstance(x, (int, float)) or not isinstance(y, (int, float)):
+                raise ToolError(f"coordinates must be numbers, got x={x}, y={y}")
             if not (0 <= x <= self.width and 0 <= y <= self.height):
                 raise ToolError(f"Coordinates ({x}, {y}) are out of bounds for screen size {self.width}x{self.height}")
-                
-        if action == "mouse_move":
-            pyautogui.moveTo(x, y)
-        elif action == "left_click":
-            pyautogui.click(x, y)
-        elif action == "right_click":
-            pyautogui.rightClick(x, y)
-        elif action == "double_click":
-            pyautogui.doubleClick(x, y)
-        elif action == "type":
-            pyautogui.write(text, interval=0.01)
-        elif action == "key":
-            pyautogui.press(text)
             
+            try:
+                if action == "mouse_move":
+                    pyautogui.moveTo(x, y)
+                elif action == "left_click":
+                    pyautogui.click(x, y)
+                elif action == "right_click":
+                    pyautogui.rightClick(x, y)
+                elif action == "double_click":
+                    pyautogui.doubleClick(x, y)
+            except Exception as e:
+                raise ToolError(f"Failed to perform {action} at coordinates ({x}, {y}): {str(e)}")
+            
+        # For actions that require text
+        elif action in ["type", "key"]:
+            if not text:
+                raise ToolError(f"text is required for {action}")
+            try:
+                if action == "type":
+                    pyautogui.write(text, interval=0.01)
+                elif action == "key":
+                    pyautogui.press(text)
+            except Exception as e:
+                raise ToolError(f"Failed to perform {action} with text '{text}': {str(e)}")
+        else:
+            raise ToolError(f"Invalid action: {action}")
+        
         # Wait briefly for actions to complete
         await asyncio.sleep(0.5)
         return await self.take_screenshot()
